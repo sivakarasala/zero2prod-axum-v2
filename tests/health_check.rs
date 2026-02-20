@@ -1,3 +1,4 @@
+use secrecy::Secret;
 use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::sync::LazyLock;
 use tokio::net::TcpListener;
@@ -51,7 +52,7 @@ async fn configure_database(configuration: &DatabaseSettings) -> PgPool {
     let maintenance_settings = DatabaseSettings {
         database_name: "postgres".to_string(),
         username: "postgres".to_string(),
-        password: "password".to_string(),
+        password: Secret::new("password".to_string()),
         ..configuration.clone()
     };
 
