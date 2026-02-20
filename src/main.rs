@@ -2,9 +2,13 @@ use sqlx::PgPool;
 use tokio::net::TcpListener;
 use zero2prod_axum_v2::configuration::get_configuration;
 use zero2prod_axum_v2::startup::run;
+use zero2prod_axum_v2::telemetry::{get_subscriber, init_subscriber};
 
 #[tokio::main]
 async fn main() -> Result<(), std::io::Error> {
+    let subscriber = get_subscriber("zero2prod_axum_v2".into(), "info".into(), std::io::stdout);
+    init_subscriber(subscriber);
+
     // Panic if we can't read configuration
     let configuration = get_configuration().expect("Failed to read configuration");
     let connection_pool = PgPool::connect(&configuration.database.connection_string())

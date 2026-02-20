@@ -6,6 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 use tokio::net::TcpListener;
+use tower_http::trace::TraceLayer;
 
 pub async fn run(
     listener: TcpListener,
@@ -14,6 +15,7 @@ pub async fn run(
     let app = Router::new()
         .route("/health_check", get(health_check))
         .route("/subscriptions", post(subscribe))
+        .layer(TraceLayer::new_for_http())
         .with_state(db_pool);
     Ok(axum::serve(listener, app))
 }

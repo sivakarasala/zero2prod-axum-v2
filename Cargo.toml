@@ -14,9 +14,15 @@ name = "zero2prod_axum_v2"
 axum = "0.8"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
-config = "0.14"
-uuid = { version = "1.20.0", features = ["v4"] }
+config = "0.15.9"
+uuid = { version = "1.21.0", features = ["v4"] }
 chrono = { version = "0.4.43", default-features = false, features = ["clock"] }
+tower-http = { version = "0.6", features = ["trace"] }
+tower = "0.5"
+tracing = { version = "0.1"}
+tracing-subscriber = { version = "0.3", features = ["registry", "env-filter"]}
+tracing-bunyan-formatter = "0.3"
+tracing-log = "0.2"
 
 [dependencies.sqlx]
 version = "0.8"
@@ -31,4 +37,4 @@ features = [
 ]
 
 [dev-dependencies]
-reqwest = "0.12"
+reqwest = "0.13.2"
