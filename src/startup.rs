@@ -6,7 +6,7 @@ use axum::{
 };
 use sqlx::PgPool;
 use tokio::net::TcpListener;
-use tower_http::request_id::{MakeRequestUuid, SetRequestIdLayer, PropagateRequestIdLayer};
+use tower_http::request_id::{MakeRequestUuid, PropagateRequestIdLayer, SetRequestIdLayer};
 use tower_http::trace::TraceLayer;
 
 pub async fn run(

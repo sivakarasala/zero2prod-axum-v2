@@ -1,5 +1,8 @@
-use secrecy::Secret;
 use secrecy::ExposeSecret;
+use secrecy::Secret;
+use serde_aux::field_attributes::deserialize_number_from_string;
+use sqlx::postgres::PgConnectOptions;
+use std::str::FromStr;
 
 #[derive(serde::Deserialize)]
 pub struct Settings {
@@ -11,20 +14,23 @@ pub struct Settings {
 pub struct DatabaseSettings {
     pub username: String,
     pub password: Secret<String>,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
     pub database_name: String,
+    pub require_ssl: bool,
+    pub channel_binding: bool,
 }
 
 #[derive(serde::Deserialize)]
 pub struct ApplicationSettings {
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
 }
 
 pub fn get_configuration() -> Result<Settings, config::ConfigError> {
-    let base_path = std::env::current_dir()
-        .expect("Failed to determine the current directory");
+    let base_path = std::env::current_dir().expect("Failed to determine the current directory");
     let configuration_directory = base_path.join("configuration");
 
     let environment: Environment = std::env::var("APP_ENVIRONMENT")
@@ -33,15 +39,19 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         .expect("Failed to parse APP_ENVIRONMENT.");
     let environment_filename = format!("{}.yaml", environment.as_str());
     let settings = config::Config::builder()
+        .add_source(config::File::from(
+            configuration_directory.join("base.yaml"),
+        ))
+        .add_source(config::File::from(
+            configuration_directory.join(environment_filename),
+        ))
         .add_source(
-            config::File::from(configuration_directory.join("base.yaml"))
-        )
-        .add_source(
-            config::File::from(configuration_directory.join(environment_filename))
+            config::Environment::with_prefix("APP")
+                .prefix_separator("_")
+                .separator("__"),
         )
         .build()?;
 
-    
     settings.try_deserialize::<Settings>()
 }
 
@@ -76,9 +86,52 @@ impl TryFrom<String> for Environment {
 
 impl DatabaseSettings {
     pub fn connection_string(&self) -> String {
+        let sslmode: String = if self.require_ssl {
+            "require".into()
+        } else {
+            "disable".into()
+        };
+        let channel_binding: String = if self.channel_binding {
+            "require".into()
+        } else {
+            "disable".into()
+        };
+        tracing::info!(
+            "{}",
+            format!(
+                "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
+                self.username,
+                self.password.expose_secret(),
+                self.host,
+                self.port,
+                self.database_name,
+                sslmode,
+                channel_binding,
+            )
+        );
         format!(
-            "postgres://{}:{}@{}:{}/{}",
-            self.username, self.password.expose_secret(), self.host, self.port, self.database_name
-        )
+                "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
+                self.username,
+                self.password.expose_secret(),
+                self.host,
+                self.port,
+                self.database_name,
+                sslmode,
+                channel_binding,
+            )
+    }
+    pub fn connection_options(&self) -> PgConnectOptions {
+        self.connection_string()
+            .parse()
+            .expect("Invalid connection string")
+        
+        // PgConnectOptions::new()
+        //     .host(&self.host)
+        //     .database(&self.database_name)
+        //     .username(&self.username)
+        //     .password(self.password.expose_secret())
+        //     .port(self.port)
+        //     .options([("sslmode", sslmode.as_str())])
+        //     .options([("channel_binding", channel_binding.as_str())])
     }
 }
