@@ -2,7 +2,6 @@ use secrecy::ExposeSecret;
 use secrecy::Secret;
 use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::PgConnectOptions;
-use std::str::FromStr;
 
 #[derive(serde::Deserialize)]
 pub struct Settings {
