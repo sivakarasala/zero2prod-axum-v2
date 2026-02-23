@@ -24,25 +24,32 @@ services:
     instance_size_slug: basic-xxs
     routes:
       - path: /
-    envs:
-      - key: APP_APPLICATION__BASE_URL
-        scope: RUN_TIME
-        value: ${APP_URL}
-      - key: APP_DATABASE__USERNAME
-        scope: RUN_TIME
-        # value: ${newsletter.USERNAME}
-      - key: APP_DATABASE__PASSWORD
-        scope: RUN_TIME
-        # value: ${newsletter.PASSWORD}
-      - key: APP_DATABASE__HOST
-        scope: RUN_TIME
-        # value: ${newsletter.HOSTNAME}
-      - key: APP_DATABASE__PORT
-        scope: RUN_TIME
-        # value: ${newsletter.PORT}
-      - key: APP_DATABASE__DATABASE_NAME
-        scope: RUN_TIME
-        # value: ${newsletter.DATABASE}
+    # To persist env vars, add them to do dashboard directly
+    # in the below format for using neon postgres db
+    # APP_DATABASE__HOST=ep-crimson-tree-a14dm9qo-pooler.ap-southeast-1.aws.neon.tech
+    # APP_DATABASE__PORT=5432
+    # APP_DATABASE__USERNAME=neondb_owner
+    # APP_DATABASE__PASSWORD=
+    # APP_DATABASE__DATABASE_NAME=newsletter
+    # envs:
+    #   - key: APP_APPLICATION__BASE_URL
+    #     scope: RUN_TIME
+    #     value: ${APP_URL}
+    #   - key: APP_DATABASE__USERNAME
+    #     scope: RUN_TIME
+    #     # value: ${newsletter.USERNAME}
+    #   - key: APP_DATABASE__PASSWORD
+    #     scope: RUN_TIME
+    #     # value: ${newsletter.PASSWORD}
+    #   - key: APP_DATABASE__HOST
+    #     scope: RUN_TIME
+    #     # value: ${newsletter.HOSTNAME}
+    #   - key: APP_DATABASE__PORT
+    #     scope: RUN_TIME
+    #     # value: ${newsletter.PORT}
+    #   - key: APP_DATABASE__DATABASE_NAME
+    #     scope: RUN_TIME
+    #     # value: ${newsletter.DATABASE}
 # databases:
 #   - engine: PG
 #     name: newsletter

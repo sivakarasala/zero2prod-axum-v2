@@ -96,19 +96,6 @@ impl DatabaseSettings {
         } else {
             "disable".into()
         };
-        tracing::info!(
-            "{}",
-            format!(
-                "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
-                self.username,
-                self.password.expose_secret(),
-                self.host,
-                self.port,
-                self.database_name,
-                sslmode,
-                channel_binding,
-            )
-        );
         format!(
                 "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
                 self.username,
@@ -124,14 +111,5 @@ impl DatabaseSettings {
         self.connection_string()
             .parse()
             .expect("Invalid connection string")
-        
-        // PgConnectOptions::new()
-        //     .host(&self.host)
-        //     .database(&self.database_name)
-        //     .username(&self.username)
-        //     .password(self.password.expose_secret())
-        //     .port(self.port)
-        //     .options([("sslmode", sslmode.as_str())])
-        //     .options([("channel_binding", channel_binding.as_str())])
     }
 }
