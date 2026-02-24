@@ -96,15 +96,15 @@ impl DatabaseSettings {
             "disable".into()
         };
         format!(
-                "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
-                self.username,
-                self.password.expose_secret(),
-                self.host,
-                self.port,
-                self.database_name,
-                sslmode,
-                channel_binding,
-            )
+            "postgresql://{}:{}@{}:{}/{}?sslmode={}&channel_binding={}",
+            self.username,
+            self.password.expose_secret(),
+            self.host,
+            self.port,
+            self.database_name,
+            sslmode,
+            channel_binding,
+        )
     }
     pub fn connection_options(&self) -> PgConnectOptions {
         self.connection_string()

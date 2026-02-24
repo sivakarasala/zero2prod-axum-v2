@@ -25,6 +25,7 @@ tracing-bunyan-formatter = "0.3"
 tracing-log = "0.2"
 secrecy = { version = "0.8", features = ["serde"]}
 serde-aux = "4"
+unicode-segmentation = "1"
 
 [dependencies.sqlx]
 version = "0.8"
@@ -40,3 +41,4 @@ features = [
 
 [dev-dependencies]
 reqwest = "0.13.2"
+claims = "0.7"
